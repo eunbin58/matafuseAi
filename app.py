@@ -32,8 +32,8 @@ def encouragement():
 # 테스트 결과를 반환하는 라우트
 @app.route('/test-result', methods=['GET'])
 def test_result():
-    user_id = request.args.get('userId')
-    return aichatbot.test_result(user_id)
+    username = request.args.get('username')
+    return aichatbot.test_result(username)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

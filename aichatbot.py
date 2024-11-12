@@ -153,11 +153,11 @@ def chat(data):
         
     return jsonify({
         'reply': chatbot_reply,
-        #'sources': sources
+        'sources': sources
     })
     
-def test_result(user_id):
-    if not user_id:
+def test_result(username):
+    if not username:
         return jsonify({"error": "User ID is required"}), 400
 
     try:
@@ -167,11 +167,11 @@ def test_result(user_id):
         query = """
             SELECT test_id, score 
             FROM test_result
-            WHERE member_id = %s
+            WHERE username = %s
             ORDER BY test_id DESC
             LIMIT 1
         """
-        cursor.execute(query, (user_id,))
+        cursor.execute(query, (username,))
         results = cursor.fetchall()
 
         return jsonify(results if results else [])

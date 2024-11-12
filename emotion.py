@@ -76,9 +76,15 @@ def generate_response(emotion, entry):
         print(f"OpenAI API error: {e}")
         return "응원 메시지를 생성할 수 없습니다. 잠시 후 다시 시도해 주세요."
 
+from flask import request, jsonify
+
 # Flask와 연결될 응원 메시지 반환 함수
 def get_encouragement():
-    user_id = "1"
+    user_id = request.args.get("user_id")  # 프론트에서 user_id를 쿼리 파라미터로 받아옴
+
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
     recent_entries = get_recent_entries(user_id)
     
     if not recent_entries:
