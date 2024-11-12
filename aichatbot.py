@@ -153,7 +153,7 @@ def chat(data):
         
     return jsonify({
         'reply': chatbot_reply,
-        'sources': sources
+        #'sources': sources
     })
     
 def test_result(user_id):
@@ -168,6 +168,8 @@ def test_result(user_id):
             SELECT test_id, score 
             FROM test_result
             WHERE member_id = %s
+            ORDER BY test_id DESC
+            LIMIT 1
         """
         cursor.execute(query, (user_id,))
         results = cursor.fetchall()
