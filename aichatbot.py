@@ -83,7 +83,7 @@ def save_conversation(user_id, role, message):
         cursor = connection.cursor()
 
         insert_query = """
-        INSERT INTO conversations (user_id, role, message)
+        INSERT INTO conversations (username, role, message)
         VALUES (%s, %s, %s);
         """
         cursor.execute(insert_query, (user_id, role, message))
@@ -107,7 +107,7 @@ def get_recent_conversations(user_id, limit=6):
         query = """
             SELECT role, message 
             FROM conversations
-            WHERE user_id = %s
+            WHERE username = %s
             ORDER BY timestamp DESC
             LIMIT %s
         """
@@ -128,14 +128,14 @@ def get_recent_conversations(user_id, limit=6):
             connection.close()
 
 def chat(data):
-    user_id = data.get('user_id')
+    username = data.get('username')
     user_message = data.get('message', '')
 
     # 사용자 메시지 저장
-    save_conversation(user_id, 'user', user_message)
+    save_conversation(username, 'user', user_message)
 
     # 과거 대화 불러오기
-    past_conversations = get_recent_conversations(user_id, limit=5)
+    past_conversations = get_recent_conversations(username, limit=5)
     context = "\n".join([f"{conv['role'].capitalize()}: {conv['message']}" for conv in past_conversations])
     
     # AI 응답 생성
@@ -145,15 +145,15 @@ def chat(data):
     chatbot_reply = result['result']
     
     # 소스 정보 JSON 배열로 포맷
-    sources = [{"source": doc.metadata['source']} for doc in result['source_documents']]
-    chatbot_reply += " # sources : " + ", ".join([f"[{i+1}] {src['source']}" for i, src in enumerate(sources)])
+    #sources = [{"source": doc.metadata['source']} for doc in result['source_documents']]
+    #chatbot_reply += " # sources : " + ", ".join([f"[{i+1}] {src['source']}" for i, src in enumerate(sources)])
 
     # 봇 응답 저장
-    save_conversation(user_id, 'bot', chatbot_reply)
+    save_conversation(username, 'bot', chatbot_reply)
         
     return jsonify({
         'reply': chatbot_reply,
-        'sources': sources
+        #'sources': sources
     })
     
 def test_result(username):
